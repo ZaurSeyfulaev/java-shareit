@@ -19,6 +19,6 @@ public class ItemRequest {
 
     @NotBlank(message = "Описание запроса не может быть пустым")
     String description;
-    private User requestor;
     LocalDateTime created;
+    private User requestor;
 }
