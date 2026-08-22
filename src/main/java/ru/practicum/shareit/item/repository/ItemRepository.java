@@ -12,10 +12,6 @@ public class ItemRepository {
     private final Map<Long, Item> items = new HashMap<>();
     private Long idCounter = 1L;
 
-    public List<Item> findAll() {
-        return new ArrayList<>(items.values());
-    }
-
     public List<Item> findByOwner(Long ownerId) {
         return items.values().stream()
                 .filter(item -> item.getOwner() != null && item.getOwner().getId().equals(ownerId))
@@ -81,11 +77,5 @@ public class ItemRepository {
                                 (item.getDescription() != null && item.getDescription().toLowerCase().contains(lowerCaseText))
                 )
                 .collect(Collectors.toList());
-    }
-
-    public void delete(Long id) {
-        if (items.remove(id) == null) {
-            throw new NotFoundException("Вещь с id " + id + " не найдена");
-        }
     }
 }

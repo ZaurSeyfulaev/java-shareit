@@ -17,11 +17,6 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    public List<UserDto> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);

@@ -10,14 +10,12 @@ public class ItemMapper {
             return null;
         }
 
-        Long requestId = item.getRequest() != null ? item.getRequest().getId() : null;
-
         return new ItemDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                requestId
+                item.getRequestId()
         );
     }
 
