@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -17,7 +15,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{id}")
+   @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }

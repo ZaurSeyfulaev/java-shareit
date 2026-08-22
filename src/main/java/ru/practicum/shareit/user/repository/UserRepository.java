@@ -5,19 +5,14 @@ import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 @Repository
 public class UserRepository {
     private final Map<Long, User> users = new HashMap<>();
     private Long idCounter = 1L;
-
-    public List<User> findAll() {
-        return new ArrayList<>(users.values());
-    }
 
     public User findById(Long id) {
         User user = users.get(id);
