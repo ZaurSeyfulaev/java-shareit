@@ -131,6 +131,7 @@ public class ItemServiceImpl implements ItemService {
             throw new IllegalArgumentException("Статус доступности должен быть указан");
         }
     }
+
     @Override
     @Transactional
     public CommentDto createComment(Long userId, Long itemId, CommentDto commentDto) {

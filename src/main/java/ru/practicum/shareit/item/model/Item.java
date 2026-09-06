@@ -5,7 +5,7 @@ import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 @Entity
-@Table(name="items")
+@Table(name = "items")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,7 +22,7 @@ public class Item {
     private Boolean available;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="owner_id")
+    @JoinColumn(name = "owner_id")
     private User owner;
 
     @Column
