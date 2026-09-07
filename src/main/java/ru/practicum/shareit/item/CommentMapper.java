@@ -19,6 +19,7 @@ public class CommentMapper {
         comment.setCreated(LocalDateTime.now());
         return comment;
     }
+
     public static CommentDto toCommentDto(Comment comment) {
         if (comment == null) {
             return null;

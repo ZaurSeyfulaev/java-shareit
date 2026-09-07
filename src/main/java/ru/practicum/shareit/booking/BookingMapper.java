@@ -23,6 +23,7 @@ public class BookingMapper {
         booking.setStatus(BookingStatus.WAITING);
         return booking;
     }
+
     public static BookingResponseDto toBookingResponseDto(Booking booking) {
         if (booking == null) {
             return null;
