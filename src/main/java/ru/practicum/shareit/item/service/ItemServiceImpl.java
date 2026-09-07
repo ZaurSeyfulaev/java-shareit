@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.emum.BookingStatus;
@@ -19,8 +20,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,24 +36,59 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(ownerId).orElseThrow(
                 () -> new NotFoundException("Владелец с id: " + ownerId + " не найден")
         );
+
+        List<Item> items = itemRepository.findAllByOwnerId(ownerId);
         LocalDateTime now = LocalDateTime.now();
-        return itemRepository.findAllByOwnerId(ownerId).stream()
-                .map(item -> {
-                    ItemDto dto = ItemMapper.toItemDto(item);
-                    dto.setLastBooking(BookingMapper.toBookingShortsDto(
-                            bookingRepository
-                                    .findFirstByItemIdAndStartBeforeAndStatusOrderByStartDesc(
-                                            item.getId(), now, BookingStatus.APPROVED)
-                                    .orElse(null)));
-                    dto.setNextBooking(BookingMapper.toBookingShortsDto(
-                            bookingRepository
-                                    .findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(
-                                            item.getId(), now, BookingStatus.APPROVED)
-                                    .orElse(null)));
-                    dto.setComments(getComments(item.getId()));
-                    return dto;
-                })
-                .collect(Collectors.toList());
+
+        List<Booking> bookings = bookingRepository
+                .findAllByItemInAndStatusOrderByStartAsc(items, BookingStatus.APPROVED);
+        Map<Long, List<Booking>> bookingsByItemId = new HashMap<>();
+        for (Booking booking : bookings) {
+            Long itemId = booking.getItem().getId();
+            if (!bookingsByItemId.containsKey(itemId)) {
+                bookingsByItemId.put(itemId, new ArrayList<>());
+            }
+            bookingsByItemId.get(itemId).add(booking);
+        }
+
+        List<Comment> comments = commentRepository.findAllByItemInOrderByCreatedAsc(items);
+        Map<Long, List<Comment>> commentsByItemId = new HashMap<>();
+        for (Comment comment : comments) {
+            Long itemId = comment.getItem().getId();
+            if (!commentsByItemId.containsKey(itemId)) {
+                commentsByItemId.put(itemId, new ArrayList<>());
+            }
+            commentsByItemId.get(itemId).add(comment);
+        }
+
+        List<ItemDto> result = new ArrayList<>();
+        for (Item item : items) {
+            ItemDto dto = ItemMapper.toItemDto(item);
+
+            List<Booking> itemBookings = bookingsByItemId.getOrDefault(
+                    item.getId(), Collections.emptyList());
+            Booking lastBooking = null;
+            Booking nextBooking = null;
+            for (Booking booking : itemBookings) {
+                if (booking.getStart().isBefore(now)) {
+                    lastBooking = booking;
+                } else if (nextBooking == null && booking.getStart().isAfter(now)) {
+                    nextBooking = booking;
+                }
+            }
+
+            List<CommentDto> itemComments = new ArrayList<>();
+            for (Comment comment : commentsByItemId.getOrDefault(
+                    item.getId(), Collections.emptyList())) {
+                itemComments.add(CommentMapper.toCommentDto(comment));
+            }
+
+            dto.setLastBooking(BookingMapper.toBookingShortsDto(lastBooking));
+            dto.setNextBooking(BookingMapper.toBookingShortsDto(nextBooking));
+            dto.setComments(itemComments);
+            result.add(dto);
+        }
+        return result;
     }
 
     @Override
@@ -153,11 +188,7 @@ public class ItemServiceImpl implements ItemService {
                     "Комментарий можно оставить только после завершённой аренды");
         }
 
-        Comment comment = new Comment();
-        comment.setText(commentDto.getText());
-        comment.setItem(item);
-        comment.setAuthor(author);
-        comment.setCreated(LocalDateTime.now());
+        Comment comment = CommentMapper.toComment(commentDto, item, author);
 
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }

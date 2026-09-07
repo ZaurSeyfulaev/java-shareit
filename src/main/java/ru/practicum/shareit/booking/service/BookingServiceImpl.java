@@ -52,12 +52,7 @@ public class BookingServiceImpl implements BookingService {
                     "Вещь недоступна для бронирования");
         }
 
-        Booking booking = new Booking();
-        booking.setStart(bookingDto.getStart());
-        booking.setEnd(bookingDto.getEnd());
-        booking.setItem(item);
-        booking.setBooker(booker);
-        booking.setStatus(BookingStatus.WAITING);
+        Booking booking = BookingMapper.toBooking(bookingDto, item, booker);
 
         return BookingMapper.toBookingResponseDto(
                 bookingRepository.save(booking));
