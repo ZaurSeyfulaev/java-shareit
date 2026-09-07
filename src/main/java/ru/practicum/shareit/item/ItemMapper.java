@@ -3,6 +3,8 @@ package ru.practicum.shareit.item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collections;
+
 public class ItemMapper {
 
     public static ItemDto toItemDto(Item item) {
@@ -15,7 +17,10 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getRequestId()
+                item.getRequestId(),
+                null,
+                null,
+                Collections.emptyList()
         );
     }
 
@@ -30,7 +35,7 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 null,
-                null
+                itemDto.getRequestId()
         );
     }
 }
