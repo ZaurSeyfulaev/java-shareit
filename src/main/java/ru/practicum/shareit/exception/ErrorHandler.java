@@ -25,4 +25,11 @@ public class ErrorHandler {
         log.error("Ошибка 409: {}", e.getMessage());
         return Map.of("error", e.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleBadRequest(IllegalArgumentException e) {
+        log.error("Ошибка 400: {}", e.getMessage());
+        return Map.of("error", e.getMessage());
+    }
 }
