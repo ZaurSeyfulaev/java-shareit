@@ -22,6 +22,7 @@ public class BaseClient {
     protected ResponseEntity<Object> get(String path) {
         return get(path, null, null);
     }
+
     protected ResponseEntity<Object> get(String path, long userId) {
         return get(path, userId, null);
     }
