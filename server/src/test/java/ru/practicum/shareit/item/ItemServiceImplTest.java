@@ -26,6 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -123,5 +124,40 @@ class ItemServiceImplTest {
         commentDto.setText("ok");
         assertEquals("ok", itemService.createComment(booker.getId(), saved.getId(), commentDto).getText());
         assertEquals(1, itemService.getItemById(saved.getId()).getComments().size());
+    }
+
+    @Test
+    void updatePartAndErrors() {
+        UserDto owner = user("OwnerP", "ownerp@test.ru");
+        UserDto other = user("Other", "other@test.ru");
+        ItemDto created = itemService.createItem(owner.getId(), item("Box"));
+
+        ItemDto patch = new ItemDto();
+        patch.setDescription("new desc");
+        patch.setAvailable(false);
+        ItemDto updated = itemService.updateItem(owner.getId(), created.getId(), patch);
+        assertEquals("new desc", updated.getDescription());
+        assertFalse(updated.getAvailable());
+
+        assertThrows(RuntimeException.class,
+                () -> itemService.updateItem(other.getId(), created.getId(), patch));
+
+        ItemDto empty = new ItemDto();
+        empty.setName(" ");
+        empty.setDescription("desc");
+        empty.setAvailable(true);
+        assertThrows(IllegalArgumentException.class,
+                () -> itemService.createItem(owner.getId(), empty));
+
+        CommentDto comment = new CommentDto();
+        comment.setText("too soon");
+        assertThrows(IllegalArgumentException.class,
+                () -> itemService.createComment(other.getId(), created.getId(), comment));
+
+        comment.setText(" ");
+        assertThrows(IllegalArgumentException.class,
+                () -> itemService.createComment(other.getId(), created.getId(), comment));
+
+        assertTrue(itemService.searchItems(null).isEmpty());
     }
 }

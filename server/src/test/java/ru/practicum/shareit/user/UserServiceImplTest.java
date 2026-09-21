@@ -47,4 +47,27 @@ class UserServiceImplTest {
         assertThrows(DuplicateEmailException.class,
                 () -> userService.createUser(user("Bob", "same@test.ru")));
     }
+
+    @Test
+    void updateEmailAndBlankEmail() {
+        UserDto first = userService.createUser(user("Ann", "ann2@test.ru"));
+        UserDto second = userService.createUser(user("Bob", "bob2@test.ru"));
+
+        UserDto sameEmail = new UserDto();
+        sameEmail.setEmail(first.getEmail());
+        assertEquals(first.getEmail(), userService.updateUser(first.getId(), sameEmail).getEmail());
+
+        UserDto taken = new UserDto();
+        taken.setEmail(first.getEmail());
+        assertThrows(DuplicateEmailException.class,
+                () -> userService.updateUser(second.getId(), taken));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.createUser(user("Empty", " ")));
+
+        UserDto blank = new UserDto();
+        blank.setEmail(" ");
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.updateUser(first.getId(), blank));
+    }
 }

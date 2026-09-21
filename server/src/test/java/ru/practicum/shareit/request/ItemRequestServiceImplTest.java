@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -46,5 +47,18 @@ class ItemRequestServiceImplTest {
         assertEquals(1, itemRequestService.getAll(second.getId()).size());
         assertEquals("Need a saw",
                 itemRequestService.getById(second.getId(), created.getId()).getDescription());
+    }
+
+    @Test
+    void emptyDescriptionAndMissingUser() {
+        UserDto first = user("Third", "third@test.ru");
+        ItemRequestDto empty = new ItemRequestDto();
+        empty.setDescription(" ");
+        assertThrows(IllegalArgumentException.class,
+                () -> itemRequestService.create(first.getId(), empty));
+        assertThrows(RuntimeException.class,
+                () -> itemRequestService.create(999L, empty));
+        assertThrows(RuntimeException.class,
+                () -> itemRequestService.getById(first.getId(), 999L));
     }
 }
