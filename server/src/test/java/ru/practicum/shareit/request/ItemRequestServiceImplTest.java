@@ -50,14 +50,12 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
-    void emptyDescriptionAndMissingUser() {
+    void missingUser() {
         UserDto first = user("Third", "third@test.ru");
-        ItemRequestDto empty = new ItemRequestDto();
-        empty.setDescription(" ");
-        assertThrows(IllegalArgumentException.class,
-                () -> itemRequestService.create(first.getId(), empty));
+        ItemRequestDto dto = new ItemRequestDto();
+        dto.setDescription("Need a drill");
         assertThrows(RuntimeException.class,
-                () -> itemRequestService.create(999L, empty));
+                () -> itemRequestService.create(999L, dto));
         assertThrows(RuntimeException.class,
                 () -> itemRequestService.getById(first.getId(), 999L));
     }

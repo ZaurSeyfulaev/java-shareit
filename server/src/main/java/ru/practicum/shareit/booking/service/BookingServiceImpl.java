@@ -29,7 +29,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingResponseDto createBooking(Long userId, BookingDto bookingDto) {
-        validateDates(bookingDto);
 
         User booker = userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(
@@ -170,21 +169,6 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream()
                 .map(BookingMapper::toBookingResponseDto)
                 .toList();
-    }
-
-    private void validateDates(BookingDto bookingDto) {
-        if (bookingDto.getStart() == null || bookingDto.getEnd() == null) {
-            throw new IllegalArgumentException(
-                    "Даты бронирования обязательны");
-        }
-        if (!bookingDto.getStart().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException(
-                    "Дата начала должна быть в будущем");
-        }
-        if (!bookingDto.getEnd().isAfter(bookingDto.getStart())) {
-            throw new IllegalArgumentException(
-                    "Дата окончания должна быть позже даты начала");
-        }
     }
 
     private void checkUserExists(Long userId) {

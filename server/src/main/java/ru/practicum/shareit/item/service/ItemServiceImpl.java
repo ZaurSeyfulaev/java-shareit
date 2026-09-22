@@ -116,7 +116,6 @@ public class ItemServiceImpl implements ItemService {
                             "Запрос с id: " + itemDto.getRequestId() + " не найден"));
         }
         Item item = ItemMapper.toItem(itemDto);
-        itemParamValidator(item);
         item.setOwner(owner);
         Item createdItem = itemRepository.save(item);
         return ItemMapper.toItemDto(createdItem);
@@ -162,18 +161,6 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private void itemParamValidator(Item item) {
-        if (item.getName() == null || item.getName().isBlank()) {
-            throw new IllegalArgumentException("Название не может быть пустым");
-        }
-        if (item.getDescription() == null || item.getDescription().isBlank()) {
-            throw new IllegalArgumentException("Описание не может быть пустым");
-        }
-        if (item.getAvailable() == null) {
-            throw new IllegalArgumentException("Статус доступности должен быть указан");
-        }
-    }
-
     @Override
     @Transactional
     public CommentDto createComment(Long userId, Long itemId, CommentDto commentDto) {
@@ -183,10 +170,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(
                 () -> new NotFoundException("Вещь с id: " + itemId + " не найдена")
         );
-
-        if (commentDto.getText() == null || commentDto.getText().isBlank()) {
-            throw new IllegalArgumentException("Текст комментария не может быть пустым");
-        }
 
         boolean rented = bookingRepository.existsByBookerIdAndItemIdAndEndBeforeAndStatus(
                 userId, itemId, LocalDateTime.now(), BookingStatus.APPROVED);

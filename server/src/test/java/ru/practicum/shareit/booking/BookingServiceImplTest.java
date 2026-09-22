@@ -132,15 +132,6 @@ class BookingServiceImplTest {
         UserDto stranger = user("Stranger", "stranger@test.ru");
         ItemDto savedItem = itemService.createItem(owner.getId(), item("Drill"));
 
-        BookingDto badDates = booking(savedItem.getId(), 2, 1);
-        assertThrows(IllegalArgumentException.class,
-                () -> bookingService.createBooking(booker.getId(), badDates));
-
-        BookingDto noDates = new BookingDto();
-        noDates.setItemId(savedItem.getId());
-        assertThrows(IllegalArgumentException.class,
-                () -> bookingService.createBooking(booker.getId(), noDates));
-
         ItemDto unavailable = item("Locked");
         unavailable.setAvailable(false);
         ItemDto locked = itemService.createItem(owner.getId(), unavailable);

@@ -49,7 +49,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateEmailAndBlankEmail() {
+    void updateEmail() {
         UserDto first = userService.createUser(user("Ann", "ann2@test.ru"));
         UserDto second = userService.createUser(user("Bob", "bob2@test.ru"));
 
@@ -61,13 +61,5 @@ class UserServiceImplTest {
         taken.setEmail(first.getEmail());
         assertThrows(DuplicateEmailException.class,
                 () -> userService.updateUser(second.getId(), taken));
-
-        assertThrows(IllegalArgumentException.class,
-                () -> userService.createUser(user("Empty", " ")));
-
-        UserDto blank = new UserDto();
-        blank.setEmail(" ");
-        assertThrows(IllegalArgumentException.class,
-                () -> userService.updateUser(first.getId(), blank));
     }
 }

@@ -22,14 +22,9 @@ class ErrorHandlerTest {
     private MockMvc mvc;
 
     @Test
-    void notFoundBadRequestAndConflict() throws Exception {
+    void notFoundAndConflict() throws Exception {
         mvc.perform(get("/users/999"))
                 .andExpect(status().isNotFound());
-
-        mvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Ann\",\"email\":\" \"}"))
-                .andExpect(status().isBadRequest());
 
         String body = "{\"name\":\"Ann\",\"email\":\"dup@test.ru\"}";
         mvc.perform(post("/users")

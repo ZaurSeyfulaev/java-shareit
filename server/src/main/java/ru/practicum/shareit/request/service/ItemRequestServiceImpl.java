@@ -32,9 +32,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Transactional
     public ItemRequestDto create(Long userId, ItemRequestDto itemRequestDto) {
         User requestor = getUserOrThrow(userId);
-        if (itemRequestDto.getDescription() == null || itemRequestDto.getDescription().isBlank()) {
-            throw new IllegalArgumentException("Описание запроса не может быть пустым");
-        }
         ItemRequest saved = itemRequestRepository.save(
                 ItemRequestMapper.toItemRequest(itemRequestDto, requestor));
         return ItemRequestMapper.toItemRequestDto(saved);

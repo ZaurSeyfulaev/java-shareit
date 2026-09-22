@@ -28,10 +28,6 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
 
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email не может быть пустым");
-        }
-
         boolean emailExists = userRepository.existsByEmail(user.getEmail());
         if (emailExists) {
             throw new DuplicateEmailException("Email " + user.getEmail() + " уже используется");
@@ -50,10 +46,7 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.toUser(userDto);
         user.setId(id);
 
-        if (user.getEmail() != null) {
-            if (user.getEmail().isBlank()) {
-                throw new IllegalArgumentException("Email не может быть пустым");
-            }
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
             if (!user.getEmail().equals(existingUser.getEmail())) {
                 boolean emailExists = userRepository.existsByEmailAndIdNot(user.getEmail(), user.getId());
                 if (emailExists) {

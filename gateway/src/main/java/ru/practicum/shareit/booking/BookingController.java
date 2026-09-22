@@ -44,6 +44,10 @@ public class BookingController {
 	public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
 			@RequestBody @Valid BookItemRequestDto requestDto) {
 		log.info("Creating booking {}, userId={}", requestDto, userId);
+        if (!requestDto.getEnd().isAfter(requestDto.getStart())) {
+            throw new IllegalArgumentException(
+                    "Дата окончания должна быть позже даты начала");
+        }
 		return bookingClient.bookItem(userId, requestDto);
 	}
 

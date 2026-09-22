@@ -142,19 +142,8 @@ class ItemServiceImplTest {
         assertThrows(RuntimeException.class,
                 () -> itemService.updateItem(other.getId(), created.getId(), patch));
 
-        ItemDto empty = new ItemDto();
-        empty.setName(" ");
-        empty.setDescription("desc");
-        empty.setAvailable(true);
-        assertThrows(IllegalArgumentException.class,
-                () -> itemService.createItem(owner.getId(), empty));
-
         CommentDto comment = new CommentDto();
         comment.setText("too soon");
-        assertThrows(IllegalArgumentException.class,
-                () -> itemService.createComment(other.getId(), created.getId(), comment));
-
-        comment.setText(" ");
         assertThrows(IllegalArgumentException.class,
                 () -> itemService.createComment(other.getId(), created.getId(), comment));
 
