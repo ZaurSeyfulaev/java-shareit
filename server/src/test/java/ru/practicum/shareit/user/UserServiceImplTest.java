@@ -61,5 +61,12 @@ class UserServiceImplTest {
         taken.setEmail(first.getEmail());
         assertThrows(DuplicateEmailException.class,
                 () -> userService.updateUser(second.getId(), taken));
+
+        UserDto newMail = new UserDto();
+        newMail.setEmail("new@test.ru");
+        assertEquals("new@test.ru",
+                userService.updateUser(second.getId(), newMail).getEmail());
+        assertThrows(RuntimeException.class,
+                () -> userService.updateUser(999L, newMail));
     }
 }

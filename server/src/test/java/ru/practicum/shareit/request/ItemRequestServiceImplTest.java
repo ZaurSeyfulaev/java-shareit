@@ -58,5 +58,9 @@ class ItemRequestServiceImplTest {
                 () -> itemRequestService.create(999L, dto));
         assertThrows(RuntimeException.class,
                 () -> itemRequestService.getById(first.getId(), 999L));
+        assertThrows(RuntimeException.class,
+                () -> itemRequestService.getOwn(999L));
+        assertThrows(RuntimeException.class,
+                () -> itemRequestService.getAll(999L));
     }
 }

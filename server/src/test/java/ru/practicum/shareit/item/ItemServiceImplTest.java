@@ -148,5 +148,13 @@ class ItemServiceImplTest {
                 () -> itemService.createComment(other.getId(), created.getId(), comment));
 
         assertTrue(itemService.searchItems(null).isEmpty());
+        assertThrows(RuntimeException.class,
+                () -> itemService.getItemById(999L));
+        assertThrows(RuntimeException.class,
+                () -> itemService.createItem(999L, item("X")));
+        assertThrows(RuntimeException.class,
+                () -> itemService.getItemsByOwner(999L));
+        assertThrows(RuntimeException.class,
+                () -> itemService.updateItem(owner.getId(), 999L, patch));
     }
 }

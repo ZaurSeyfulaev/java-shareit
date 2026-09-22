@@ -152,6 +152,14 @@ class BookingServiceImplTest {
                 () -> bookingService.getBookingsByBooker(999L, "ALL"));
         assertThrows(NotFoundException.class,
                 () -> bookingService.createBooking(999L, booking(savedItem.getId(), 1, 2)));
+        assertThrows(NotFoundException.class,
+                () -> bookingService.createBooking(booker.getId(), booking(999L, 1, 2)));
+        assertThrows(NotFoundException.class,
+                () -> bookingService.approveBooking(owner.getId(), 999L, true));
+        assertThrows(NotFoundException.class,
+                () -> bookingService.getBookingById(booker.getId(), 999L));
+        assertThrows(NotFoundException.class,
+                () -> bookingService.getBookingsByOwner(999L, "ALL"));
     }
 
     private ItemDto item(String name) {
